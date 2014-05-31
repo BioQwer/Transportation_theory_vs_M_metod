@@ -64,7 +64,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
 
         private bool is_M_Basis_Empty()
         {
-            bool result = true; 
+            bool result = true;
             for (int i = 0; i < c_basis.Length; i++)
             {
                 if (c_basis[i] == M)
@@ -73,7 +73,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             return result;
         }
 
-        private void z_full()  
+        private void z_full()
         {
             int n = z_fuction.GetLength(0);
             for (int i = 0; i < n; i++)
@@ -96,25 +96,25 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             {
                 for (int i = 0; i < A.GetLength(0); i++)
                 {
-                    for (int j = 0; j < potrebnosti.Length+1; j++)
+                    for (int j = 0; j < potrebnosti.Length + 1; j++)
                         if (c_basis[i] == M)
                             z_fuction_M[j] += A[i, j];
                         else
-                            z_fuction[j] += A[i, j]*c_basis[i];
+                            z_fuction[j] += A[i, j] * c_basis[i];
                 }
                 for (int i = 0; i < potrebnosti.Length; i++)
                     if (potrebnosti[i] == M)
                         z_fuction_M[i]--;
                     else
-                        z_fuction[i] -= potrebnosti[i];               
+                        z_fuction[i] -= potrebnosti[i];
             }
         }
 
         private void find_basis()
         {
             int flag = 0;
-            for (int j = 0; j < A.GetLength(1)-1; j++)   //проход по строкам из за этого сначала по j   
-                                                         //последний столб не считаем так как это правый столбец
+            for (int j = 0; j < A.GetLength(1) - 1; j++)   //проход по строкам из за этого сначала по j   
+            //последний столб не считаем так как это правый столбец
             {
                 int ed = 0;
                 int nol = 0;
@@ -176,8 +176,8 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
 
         private void rulez_element()    //Поиск главного элемента там где z_func ==  max  
         {
-            rules_i = 0;
-            rules_j = 0;
+            rules_i = -1;
+            rules_j = -1;
             bool[] polozhit_Z = new bool[z_fuction_M.Length];
             double[] min_A0_to_Aj = new double[z_fuction_M.Length];
             int[] index_min_A0_to_Aj = new int[z_fuction_M.Length];
@@ -188,25 +188,29 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 {
                     for (int j = 0; j < tao.GetLength(1); j++)
                     {
-                        tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j])*z_fuction[j];
+                        tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]) * z_fuction[j];
                     }
                 }
-                for (int i = 0; i < A.GetLength(0); i++)
-                {
-                    for (int j = 0; j < A.GetLength(1) - 1; j++)
-                        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
+                //for (int i = 0; i < A.GetLength(0); i++)
+                //{
+                //    for (int j = 0; j < A.GetLength(1) - 1; j++)
+                //        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
 
-                    Console.WriteLine();
-                }
-
+                //    Console.WriteLine();
+                //}
+                
                 for (int i = 0; i < z_fuction.Length - 1; i++)
                 {
                     min_A0_to_Aj[i] = Int16.MinValue;
                     if (z_fuction[i] > 0)
+                    {
                         polozhit_Z[i] = true;
+                        
+                    }
                     else
                         polozhit_Z[i] = false;
                 }
+                
 
                 for (int i = 0; i < z_fuction_M.Length - 1; i++)
                 {
@@ -232,7 +236,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                         {
                             max = min_A0_to_Aj[i];
                             rules_i = index_min_A0_to_Aj[i];
-                            rules_j = i ;
+                            rules_j = i;
                         }
                 }
             }
@@ -243,47 +247,63 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 {
                     for (int j = 0; j < tao.GetLength(1); j++)
                     {
-                        tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]);
+                        tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]) * z_fuction_M[j];
                     }
                 }
-                for (int i = 0; i < A.GetLength(0); i++)
-                {
-                    for (int j = 0; j < A.GetLength(1) - 1; j++)
-                        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
+                //for (int i = 0; i < A.GetLength(0); i++)
+                //{
+                //    for (int j = 0; j < A.GetLength(1) - 1; j++)
+                //        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
 
-                    Console.WriteLine();
-                }
-
+                //    Console.WriteLine();
+                //}
+                int counter = 0;
                 for (int i = 0; i < z_fuction.Length - 1; i++)
                 {
-                    min_A0_to_Aj[i] = Int16.MinValue;
-                    if (z_fuction_M[i]*M+z_fuction[i] > 0)
+                    min_A0_to_Aj[i] = Int16.MaxValue;
+                    if (z_fuction_M[i] > 0)
+                    {
                         polozhit_Z[i] = true;
+                        counter++;
+                    }
                     else
                         polozhit_Z[i] = false;
                 }
-
-                for (int i = 0; i < z_fuction_M.Length-1; i++)
+                if (counter == 0)
+                {
+                    return;
+                }
+                    
+                for (int i = 0; i < z_fuction_M.Length - 1; i++)
                 {
                     if (polozhit_Z[i])
                     {
                         double min = Int16.MaxValue;
+                        int min_index = 0;
                         for (int j = 0; j < A.GetLength(0); j++)
                         {
-                            if (tao[j,i]>0 && tao[j,i]<min)
+                            if (tao[j, i] > 0 && tao[j, i] <= min)
                             {
-                                min = tao[j,i];
-                                index_min_A0_to_Aj[i] = j;
+                                min = tao[j, i];
+                                min_index = j;
                             }
                         }
                         min_A0_to_Aj[i] = min;
+                        index_min_A0_to_Aj[i] = min_index;
                     }
                 }
+                //Console.WriteLine("Минимальные элементы");
+                //for (int i = 0; i < z_fuction.Length - 1; i++)
+                //    if (min_A0_to_Aj[i] != Int16.MaxValue)
+                //        Console.Write(" [" + index_min_A0_to_Aj[i] + "  ]={0,4:F1}", min_A0_to_Aj[i]);
+                //    else
+                //        Console.Write(" [" + index_min_A0_to_Aj[i] + "  ]=max ");
+
                 double max = Int16.MinValue;
-                for (int i = 0; i < z_fuction_M.Length-1; i++)
+                for (int i = 0; i < z_fuction_M.Length - 1; i++)
                 {
                     if (polozhit_Z[i])
-                        if (min_A0_to_Aj[i] >= max)
+                        if (min_A0_to_Aj[i] > max)
                         {
                             max = min_A0_to_Aj[i];
                             rules_i = index_min_A0_to_Aj[i];
@@ -291,7 +311,6 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                         }
                 }
             }
-
             ////Вывод для себя  
             Console.WriteLine("\nRules = [{0,2},{1,2}] = {2,2}", rules_i, rules_j, A[rules_i, rules_j]);
         }
@@ -299,6 +318,12 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
         public void jordan_gaus()
         {
             rulez_element();
+            if (rules_i == -1 && rules_j == -1)
+            {
+                //Console.WriteLine("ЗАДАЧА НЕСОВМЕСТНА!");
+                return;
+            }
+
             double rules = A[rules_i, rules_j];
             for (int j = 0; j < A.GetLength(1); j++)
             {
@@ -353,18 +378,23 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                     for (int j = 0; j < x.GetLength(0); j++)
                         x[j] = 0;
                     for (int j = 0; j < position_basis.GetLength(0); j++)
-                        x[position_basis[j]] = A[j, A.GetLength(1)-1];
+                        x[position_basis[j]] = A[j, A.GetLength(1) - 1];
 
                     for (int j = 0; j < A.GetLength(1) - A.GetLength(0) - 1; j++)
                         Console.Write("{0,3}", x[j]);
 
                     F = z_fuction[z_fuction.Length - 1];
-                    Console.WriteLine("\nЦелевая = {0,6:F3}",F);
+                    Console.WriteLine("\nЦелевая = {0,6:F3}", F);
                     return;
                 }
             }
             //последовательные действия алгоритма симплекс метода
             jordan_gaus();              //коректируем матрицу
+            if (rules_i == -1 && rules_j == -1)
+            {
+                Console.WriteLine("ЗАДАЧА НЕСОВМЕСТНА!");
+                return;
+            }
             iteration();
         }
     }
