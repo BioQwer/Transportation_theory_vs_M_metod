@@ -27,44 +27,32 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             int n = A.GetLength(0);   //строки
             int k = A.GetLength(1);   //столбцы
             this.zapasu = zapasu;
-            this.A = new double[n, k + 2*n + 1];   //размерность = [строки + столбцы(для базиса) + 1 для вектора B 
+            this.A = new double[n, k + n + 1];   //размерность = [строки + столбцы(для базиса) + 1 для вектора B 
             //колво строк остоётся таким же(как в исходной)] 
-            position_basis = new int[2*n];
-            c_basis = new double[2*n];
-            z_fuction = new double[k + 2*n + 1];
-            z_fuction_M = new double[k + 2*n + 1];
+            position_basis = new int[n];
+            c_basis = new double[n];
+            z_fuction = new double[k + n + 1];
+            z_fuction_M = new double[k + n + 1];
             //заполнение массива с = начальные условия целевой функции
-            this.potrebnosti = new double[2*n + k];  //строка в симплекс таблице с c1,c2,c3... нумерацию вести с "0"
+            this.potrebnosti = new double[n + k];  //строка в симплекс таблице с c1,c2,c3... нумерацию вести с "0"
 
             for (int i = 0; i < k; i++)
                 this.potrebnosti[i] = potrebnosti[i];
             for (int i = k; i < n + k; i++)
-                this.potrebnosti[i] = 0;
-            for (int i = n + k; i <2*n+k ; i++)
                 this.potrebnosti[i] = M;
-
             //заполнение A
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < k; j++)
                     this.A[i, j] = A[i, j];
             for (int j = 0; j < n; j++)
-                this.A[j, 2*n + k] = zapasu[j];
-
+                this.A[j, n + k] = zapasu[j];
             for (int i = n - 1; i > 0; i--)                   //заполнение 2й части матрицы базисом
                 for (int j = n + k - 1; j > k; j--)
                     if (j - k == i)
-                        this.A[i, j] = -1;
-                    else
-                        this.A[i, j] = 0;
-            this.A[0, k] = -1;    //magic don't touch
-
-            for (int i = n - 1; i > 0; i--)                   //заполнение 2й части матрицы базисом
-                for (int j = 2*n + k - 1; j > k+n; j--)
-                    if (i==j-n-k)
                         this.A[i, j] = 1;
                     else
                         this.A[i, j] = 0;
-            this.A[0, k+n] = 1;    //magic don't touch
+            this.A[0, k] = 1;    //magic don't touch
         }
 
         private void c_basis_full()
