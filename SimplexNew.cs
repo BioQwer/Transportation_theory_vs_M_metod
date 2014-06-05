@@ -22,9 +22,64 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
         double F = 0;   //целевая
 
 
-        public static void Converter(double[,] A, double[] potrebnosti, double[] zapasu)
+        public static void Converter(ref double[,] A,ref double[] potrebnosti,ref double[] zapasu)
         {
+            int n = A.GetLength(0);
+            int k = A.GetLength(1);
+            double[,] tempA = new double[n+k,n*k];
+            double[] post = new double[n * k];
+            double[] zaps = new double[n + k];
 
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < k; j++)
+                {
+                    post[i * n + j] = A[i, j];
+                }                
+            }
+
+            for (int i = 0; i < n+k; i++)
+            {
+                if (i < n)
+                    zaps[i] = zapasu[i];
+                else
+                    zaps[i] = potrebnosti[i - n];
+            }
+
+            for (int i = 0; i < n + k; i++)
+            {
+                for (int j = 0; j < n * k; j++)
+                {
+                    tempA[i, j] = 0;
+                }
+            }
+
+            for (int i = 0; i < n+k; i++)
+            {
+                for (int j = 0; j < n*k; j++)
+                {
+                    if (i < k)
+                        tempA[j / k, j] = 1;
+                }
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < k; j++)
+                {
+                    tempA[j+n, j+k*i] = 1;
+                }
+            }
+
+            for (int i = 0; i < n+k; i++)
+            {
+                for (int j = 0; j < n*k; j++)
+                    Console.Write(" [" + i + "," + j + "]={0,4:F1}", tempA[i, j]);
+
+                Console.WriteLine();
+            }
+
+            Console.ReadLine();
 
         }
 
