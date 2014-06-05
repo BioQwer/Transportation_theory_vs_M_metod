@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace СравнениеМетодаПотенциалов_СимплексМетода
 {
-    public class SimplexNew
+    public class SimplexNew    //Модифицированный СимплексМетод == М метод
     {
         protected double[,] A;  //матрица ограничений
         public double[] potrebnosti;     //условия целовой функции
@@ -21,6 +21,12 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
         int M = 200;   //искуственная переменная большая цифра
         double F = 0;   //целевая
 
+
+        public static void Converter(double[,] A, double[] potrebnosti, double[] zapasu)
+        {
+
+
+        }
 
         public SimplexNew(double[,] A, double[] potrebnosti, double[] zapasu)  //конструктор с созданием переменных класса и тут же заполнение
         {
@@ -100,7 +106,12 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                         if (c_basis[i] == M)
                             z_fuction_M[j] += A[i, j];
                         else
-                            z_fuction[j] += A[i, j] * c_basis[i];
+                            if(j==23)
+                            {
+                                 z_fuction[j] += A[i, j] * c_basis[i];
+                                Console.WriteLine("a [i] = {0} : cbaz = {1}", A[i, j] ,c_basis[i]);
+                            }
+                            
                 }
                 for (int i = 0; i < potrebnosti.Length; i++)
                     if (potrebnosti[i] == M)
@@ -390,11 +401,11 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             }
             //последовательные действия алгоритма симплекс метода
             jordan_gaus();              //коректируем матрицу
-            if (rules_i == -1 && rules_j == -1)
-            {
-                Console.WriteLine("ЗАДАЧА НЕСОВМЕСТНА!");
-                return;
-            }
+            //if (rules_i == -1 && rules_j == -1)
+            //{
+            //    Console.WriteLine("ЗАДАЧА НЕСОВМЕСТНА!");
+            //    return;
+            //}
             iteration();
         }
     }
