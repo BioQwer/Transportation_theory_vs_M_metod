@@ -34,7 +34,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             {
                 for (int j = 0; j < k; j++)
                 {
-                    post[i * n + j] = A[i, j];
+                    post[i * k + j] = A[i, j];
                 }                
             }
 
@@ -71,15 +71,18 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 }
             }
 
-            for (int i = 0; i < n+k; i++)
-            {
-                for (int j = 0; j < n*k; j++)
-                    Console.Write(" [" + i + "," + j + "]={0,4:F1}", tempA[i, j]);
+            //for (int i = 0; i < n+k; i++)
+            //{
+            //    for (int j = 0; j < n*k; j++)
+            //        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tempA[i, j]);
 
-                Console.WriteLine();
-            }
+            //    Console.WriteLine();
+            //}
 
-            Console.ReadLine();
+            //Console.ReadLine();
+            A = tempA;
+            potrebnosti = post;
+            zapasu = zaps;
 
         }
 
@@ -161,11 +164,9 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                         if (c_basis[i] == M)
                             z_fuction_M[j] += A[i, j];
                         else
-                            if(j==23)
-                            {
+                           
                                  z_fuction[j] += A[i, j] * c_basis[i];
-                                Console.WriteLine("a [i] = {0} : cbaz = {1}", A[i, j] ,c_basis[i]);
-                            }
+//                                Console.WriteLine("a [i] = {0} : cbaz = {1}", A[i, j] ,c_basis[i]);
                             
                 }
                 for (int i = 0; i < potrebnosti.Length; i++)
@@ -348,7 +349,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                         int min_index = 0;
                         for (int j = 0; j < A.GetLength(0); j++)
                         {
-                            if (tao[j, i] > 0 && tao[j, i] <= min)
+                            if (tao[j, i] > 0 && tao[j, i] < min)
                             {
                                 min = tao[j, i];
                                 min_index = j;
