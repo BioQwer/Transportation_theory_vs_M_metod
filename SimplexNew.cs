@@ -317,13 +317,15 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                         tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]) * z_fuction_M[j];
                     }
                 }
-                //for (int i = 0; i < A.GetLength(0); i++)
-                //{
-                //    for (int j = 0; j < A.GetLength(1) - 1; j++)
-                //        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
 
-                //    Console.WriteLine();
-                //}
+                Console.WriteLine(Environment.NewLine+"(b[i] / A[i, j]) * z_fuction_M[j] == Матрица со всеми тао домноженная на Z");
+                for (int i = 0; i < A.GetLength(0); i++)
+                {
+                    for (int j = 0; j < A.GetLength(1) - 1; j++)
+                        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
+
+                    Console.WriteLine();
+                }
                 int counter = 0;
                 for (int i = 0; i < z_fuction.Length - 1; i++)
                 {
@@ -411,6 +413,22 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             }
         }
 
+        private void get_ansver()
+        {
+            Console.WriteLine("Ответ : ");
+            double[] x = new double[A.GetLength(1) - 1];
+            for (int j = 0; j < x.GetLength(0); j++)
+                x[j] = 0;
+            for (int j = 0; j < position_basis.GetLength(0); j++)
+                x[position_basis[j]] = A[j, A.GetLength(1) - 1];
+
+            for (int j = 0; j < A.GetLength(1) - A.GetLength(0) - 1; j++)
+                Console.Write("{0,3}", x[j]);
+
+            F = z_fuction[z_fuction.Length - 1];
+            Console.WriteLine("\nЦелевая = {0,6:F3}", F);
+        }
+
         public void iteration()
         {
             c_basis_full();             //заполняем с_базис
@@ -440,21 +458,31 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 if ((z_fuction.GetLength(0) - otr) == 0)
                 {
                     Console.WriteLine("Задача решена все z - ci <= 0");
-                    Console.WriteLine("Ответ : ");
-                    double[] x = new double[A.GetLength(1) - 1];
-                    for (int j = 0; j < x.GetLength(0); j++)
-                        x[j] = 0;
-                    for (int j = 0; j < position_basis.GetLength(0); j++)
-                        x[position_basis[j]] = A[j, A.GetLength(1) - 1];
-
-                    for (int j = 0; j < A.GetLength(1) - A.GetLength(0) - 1; j++)
-                        Console.Write("{0,3}", x[j]);
-
-                    F = z_fuction[z_fuction.Length - 1];
-                    Console.WriteLine("\nЦелевая = {0,6:F3}", F);
+                    get_ansver();
                     return;
                 }
             }
+            //правило для основки с М методом
+            if (!is_M_Basis_Empty())
+            {
+                int counter_poziv = 0;
+                int counter_negative = 0;
+                for (int i = 0; i < z_fuction_M.Length; i++)
+                {
+                    if (z_fuction_M[i] > 0.0)
+                        counter_poziv++;
+                    if (z_fuction_M[i] < 0.0)
+                        counter_negative++;
+                }
+
+                if (counter_negative != 0&&counter_poziv==0)
+                {
+                    Console.WriteLine("ЗАДАЧА решена ОПОРНЫЙ ПЛАН ВЫРОЖДЕН");
+                    get_ansver();
+                    return;
+                }
+            }
+
             //последовательные действия алгоритма симплекс метода
             jordan_gaus();              //коректируем матрицу
             //if (rules_i == -1 && rules_j == -1)
