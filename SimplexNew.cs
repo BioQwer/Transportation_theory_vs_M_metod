@@ -22,11 +22,11 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
         double F = 0;   //целевая
 
 
-        public static void Converter(ref double[,] A,ref double[] potrebnosti,ref double[] zapasu)
+        public static void Converter(ref double[,] A, ref double[] potrebnosti, ref double[] zapasu)
         {
             int n = A.GetLength(0);
             int k = A.GetLength(1);
-            double[,] tempA = new double[n+k,n*k];
+            double[,] tempA = new double[n + k, n * k];
             double[] post = new double[n * k];
             double[] zaps = new double[n + k];
 
@@ -35,10 +35,10 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 for (int j = 0; j < k; j++)
                 {
                     post[i * k + j] = A[i, j];
-                }                
+                }
             }
 
-            for (int i = 0; i < n+k; i++)
+            for (int i = 0; i < n + k; i++)
             {
                 if (i < n)
                     zaps[i] = zapasu[i];
@@ -54,9 +54,9 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 }
             }
 
-            for (int i = 0; i < n+k; i++)
+            for (int i = 0; i < n + k; i++)
             {
-                for (int j = 0; j < n*k; j++)
+                for (int j = 0; j < n * k; j++)
                 {
                     if (i < k)
                         tempA[j / k, j] = 1;
@@ -67,19 +67,10 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             {
                 for (int j = 0; j < k; j++)
                 {
-                    tempA[j+n, j+k*i] = 1;
+                    tempA[j + n, j + k * i] = 1;
                 }
             }
 
-            //for (int i = 0; i < n+k; i++)
-            //{
-            //    for (int j = 0; j < n*k; j++)
-            //        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tempA[i, j]);
-
-            //    Console.WriteLine();
-            //}
-
-            //Console.ReadLine();
             A = tempA;
             potrebnosti = post;
             zapasu = zaps;
@@ -164,10 +155,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                         if (c_basis[i] == M)
                             z_fuction_M[j] += A[i, j];
                         else
-                           
-                                 z_fuction[j] += A[i, j] * c_basis[i];
-//                                Console.WriteLine("a [i] = {0} : cbaz = {1}", A[i, j] ,c_basis[i]);
-                            
+                            z_fuction[j] += A[i, j] * c_basis[i];
                 }
                 for (int i = 0; i < potrebnosti.Length; i++)
                     if (potrebnosti[i] == M)
@@ -241,144 +229,173 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             Console.ReadKey();  //!!!!
         }
 
+        private void find_in_z()
+        {
+            bool[] polozhit_Z = new bool[z_fuction_M.Length];
+            double[] min_A0_to_Aj = new double[z_fuction_M.Length];
+            int[] index_min_A0_to_Aj = new int[z_fuction_M.Length];
+            double[,] tao = new double[A.GetLength(0), A.GetLength(1)];
+            for (int i = 0; i < tao.GetLength(0); i++)
+            {
+                for (int j = 0; j < tao.GetLength(1); j++)
+                {
+                    tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]) * z_fuction[j];
+                }
+            }
+            Console.WriteLine(Environment.NewLine + "(b[i] / A[i, j]) * z_fuction_M[j] == Матрица со всеми тао домноженная на Z");
+            for (int i = 0; i < A.GetLength(0); i++)
+            {
+                for (int j = 0; j < A.GetLength(1) - 1; j++)
+                    Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
+
+                Console.WriteLine();
+            }
+
+            for (int i = 0; i < z_fuction.Length - 1; i++)
+            {
+                min_A0_to_Aj[i] = Int16.MinValue;
+                if (z_fuction[i] > 0)
+                {
+                    polozhit_Z[i] = true;
+                }
+                else
+                    polozhit_Z[i] = false;
+            }
+
+
+            for (int i = 0; i < z_fuction_M.Length - 1; i++)
+            {
+                if (polozhit_Z[i])
+                {
+                    double min = Int16.MaxValue;
+                    for (int j = 0; j < A.GetLength(0); j++)
+                    {
+                        if (tao[j, i] > 0 && tao[j, i] < min)
+                        {
+                            min = tao[j, i];
+                            index_min_A0_to_Aj[i] = j;
+                        }
+                    }
+                    min_A0_to_Aj[i] = min;
+                }
+            }
+            double max = Int16.MinValue;
+            for (int i = 0; i < z_fuction_M.Length - 1; i++)
+            {
+                if (polozhit_Z[i])
+                    if (min_A0_to_Aj[i] > max)
+                    {
+                        max = min_A0_to_Aj[i];
+                        rules_i = index_min_A0_to_Aj[i];
+                        rules_j = i;
+                    }
+            }
+        }
+
+        private void find_in_z_M()
+        {
+            bool[] polozhit_Z = new bool[z_fuction_M.Length];
+            double[] min_A0_to_Aj = new double[z_fuction_M.Length];
+            int[] index_min_A0_to_Aj = new int[z_fuction_M.Length];
+            double[,] tao = new double[A.GetLength(0), A.GetLength(1)];
+            for (int i = 0; i < tao.GetLength(0); i++)
+            {
+                for (int j = 0; j < tao.GetLength(1); j++)
+                {
+                    tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]) * z_fuction_M[j];
+                }
+            }
+
+            Console.WriteLine(Environment.NewLine + "(b[i] / A[i, j]) * z_fuction_M[j] == Матрица со всеми тао домноженная на Z");
+            for (int i = 0; i < A.GetLength(0); i++)
+            {
+                for (int j = 0; j < A.GetLength(1) - 1; j++)
+                    Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
+
+                Console.WriteLine();
+            }
+            int counter = 0;
+            for (int i = 0; i < z_fuction.Length - 1; i++)
+            {
+                min_A0_to_Aj[i] = Int16.MaxValue;
+                if (z_fuction_M[i] > 0)
+                {
+                    polozhit_Z[i] = true;
+                    counter++;
+                }
+                else
+                    polozhit_Z[i] = false;
+            }
+            if (counter == 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < z_fuction_M.Length - 1; i++)
+            {
+                if (polozhit_Z[i])
+                {
+                    double min = Int16.MaxValue;
+                    int min_index = 0;
+                    for (int j = 0; j < A.GetLength(0); j++)
+                    {
+                        if (tao[j, i] > 0 && tao[j, i] <= min)
+                        {
+                            min = tao[j, i];
+                            min_index = j;
+                        }
+                    }
+                    min_A0_to_Aj[i] = min;
+                    index_min_A0_to_Aj[i] = min_index;
+                }
+            }
+            
+            double max = Int16.MinValue;
+            for (int i = 0; i < z_fuction_M.Length - 1; i++)
+            {
+                if (polozhit_Z[i])
+                    if (min_A0_to_Aj[i] > max)
+                    {
+                        max = min_A0_to_Aj[i];
+                        rules_i = index_min_A0_to_Aj[i];
+                        rules_j = i;
+                    }
+            }
+        }
+
+        private bool is_M_negative()
+        {
+            int counter_poziv = 0;
+            int counter_negative = 0;
+            for (int i = 0; i < z_fuction_M.Length; i++)
+            {
+                if (z_fuction_M[i] > 0.0)
+                    counter_poziv++;
+                if (z_fuction_M[i] < 0.0)
+                    counter_negative++;
+            }
+
+            if (counter_negative != 0 && counter_poziv == 0)
+                return true;
+            else
+                return false;
+        }
+
         private void rulez_element()    //Поиск главного элемента там где z_func ==  max  
         {
             rules_i = -1;
             rules_j = -1;
-            bool[] polozhit_Z = new bool[z_fuction_M.Length];
-            double[] min_A0_to_Aj = new double[z_fuction_M.Length];
-            int[] index_min_A0_to_Aj = new int[z_fuction_M.Length];
+
             if (is_M_Basis_Empty())
             {
-                double[,] tao = new double[A.GetLength(0), A.GetLength(1)];
-                for (int i = 0; i < tao.GetLength(0); i++)
-                {
-                    for (int j = 0; j < tao.GetLength(1); j++)
-                    {
-                        tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]) * z_fuction[j];
-                    }
-                }
-                //for (int i = 0; i < A.GetLength(0); i++)
-                //{
-                //    for (int j = 0; j < A.GetLength(1) - 1; j++)
-                //        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
-
-                //    Console.WriteLine();
-                //}
-                
-                for (int i = 0; i < z_fuction.Length - 1; i++)
-                {
-                    min_A0_to_Aj[i] = Int16.MinValue;
-                    if (z_fuction[i] > 0)
-                    {
-                        polozhit_Z[i] = true;
-                        
-                    }
-                    else
-                        polozhit_Z[i] = false;
-                }
-                
-
-                for (int i = 0; i < z_fuction_M.Length - 1; i++)
-                {
-                    if (polozhit_Z[i])
-                    {
-                        double min = Int16.MaxValue;
-                        for (int j = 0; j < A.GetLength(0); j++)
-                        {
-                            if (tao[j, i] > 0 && tao[j, i] < min)
-                            {
-                                min = tao[j, i];
-                                index_min_A0_to_Aj[i] = j;
-                            }
-                        }
-                        min_A0_to_Aj[i] = min;
-                    }
-                }
-                double max = Int16.MinValue;
-                for (int i = 0; i < z_fuction_M.Length - 1; i++)
-                {
-                    if (polozhit_Z[i])
-                        if (min_A0_to_Aj[i] > max)
-                        {
-                            max = min_A0_to_Aj[i];
-                            rules_i = index_min_A0_to_Aj[i];
-                            rules_j = i;
-                        }
-                }
+                find_in_z();
             }
             else  //модификация для искуственного базисса
             {
-                double[,] tao = new double[A.GetLength(0), A.GetLength(1)];
-                for (int i = 0; i < tao.GetLength(0); i++)
-                {
-                    for (int j = 0; j < tao.GetLength(1); j++)
-                    {
-                        tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]) * z_fuction_M[j];
-                    }
-                }
-
-                Console.WriteLine(Environment.NewLine+"(b[i] / A[i, j]) * z_fuction_M[j] == Матрица со всеми тао домноженная на Z");
-                for (int i = 0; i < A.GetLength(0); i++)
-                {
-                    for (int j = 0; j < A.GetLength(1) - 1; j++)
-                        Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
-
-                    Console.WriteLine();
-                }
-                int counter = 0;
-                for (int i = 0; i < z_fuction.Length - 1; i++)
-                {
-                    min_A0_to_Aj[i] = Int16.MaxValue;
-                    if (z_fuction_M[i] > 0)
-                    {
-                        polozhit_Z[i] = true;
-                        counter++;
-                    }
-                    else
-                        polozhit_Z[i] = false;
-                }
-                if (counter == 0)
-                {
-                    return;
-                }
-                    
-                for (int i = 0; i < z_fuction_M.Length - 1; i++)
-                {
-                    if (polozhit_Z[i])
-                    {
-                        double min = Int16.MaxValue;
-                        int min_index = 0;
-                        for (int j = 0; j < A.GetLength(0); j++)
-                        {
-                            if (tao[j, i] > 0 && tao[j, i] < min)
-                            {
-                                min = tao[j, i];
-                                min_index = j;
-                            }
-                        }
-                        min_A0_to_Aj[i] = min;
-                        index_min_A0_to_Aj[i] = min_index;
-                    }
-                }
-                //Console.WriteLine("Минимальные элементы");
-                //for (int i = 0; i < z_fuction.Length - 1; i++)
-                //    if (min_A0_to_Aj[i] != Int16.MaxValue)
-                //        Console.Write(" [" + index_min_A0_to_Aj[i] + "  ]={0,4:F1}", min_A0_to_Aj[i]);
-                //    else
-                //        Console.Write(" [" + index_min_A0_to_Aj[i] + "  ]=max ");
-
-                double max = Int16.MinValue;
-                for (int i = 0; i < z_fuction_M.Length - 1; i++)
-                {
-                    if (polozhit_Z[i])
-                        if (min_A0_to_Aj[i] > max)
-                        {
-                            max = min_A0_to_Aj[i];
-                            rules_i = index_min_A0_to_Aj[i];
-                            rules_j = i;
-                        }
-                }
+                if (is_M_negative())
+                    find_in_z();
+                else
+                    find_in_z_M();
             }
             ////Вывод для себя  
             Console.WriteLine("\nRules = [{0,2},{1,2}] = {2,2}", rules_i, rules_j, A[rules_i, rules_j]);
@@ -463,25 +480,25 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 }
             }
             //правило для основки с М методом
-            if (!is_M_Basis_Empty())
-            {
-                int counter_poziv = 0;
-                int counter_negative = 0;
-                for (int i = 0; i < z_fuction_M.Length; i++)
-                {
-                    if (z_fuction_M[i] > 0.0)
-                        counter_poziv++;
-                    if (z_fuction_M[i] < 0.0)
-                        counter_negative++;
-                }
+            //if (!is_M_Basis_Empty())
+            //{
+            //    int counter_poziv = 0;
+            //    int counter_negative = 0;
+            //    for (int i = 0; i < z_fuction_M.Length; i++)
+            //    {
+            //        if (z_fuction_M[i] > 0.0)
+            //            counter_poziv++;
+            //        if (z_fuction_M[i] < 0.0)
+            //            counter_negative++;
+            //    }
 
-                if (counter_negative != 0&&counter_poziv==0)
-                {
-                    Console.WriteLine("ЗАДАЧА решена ОПОРНЫЙ ПЛАН ВЫРОЖДЕН");
-                    get_ansver();
-                    return;
-                }
-            }
+            //    if (counter_negative != 0 && counter_poziv == 0)
+            //    {
+            //        Console.WriteLine("ЗАДАЧА решена ОПОРНЫЙ ПЛАН ВЫРОЖДЕН");
+            //        get_ansver();
+            //        return;
+            //    }
+            //}
 
             //последовательные действия алгоритма симплекс метода
             jordan_gaus();              //коректируем матрицу
