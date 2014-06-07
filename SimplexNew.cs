@@ -280,7 +280,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                     int min_index = 0;
                     for (int j = 0; j < A.GetLength(0); j++)
                     {
-                        if (tao[j, i] > 0 && tao[j, i] < min)
+                        if (tao[j, i] >= 0 && tao[j, i] < min && A[j,i]>0)
                         {
                             min = tao[j, i];
                             min_index = j;
@@ -480,11 +480,19 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             }
             //второе условвие остановки
             int otr = 0;
-            for (int i = 0; i < z_fuction.GetLength(0); i++)
+            int n = 0;
+            for (int i = 0; i < potrebnosti.Length; i++)
+                if (potrebnosti[i] == M)
+                {
+                    n = i;
+                    break;
+                }
+            for (int i = 0; i < n; i++)
             {
+
                 if (z_fuction[i] <= 0 && is_M_Basis_Empty())
                     otr++;
-                if ((z_fuction.GetLength(0) - otr) == 0)
+                if ((n - otr) == 0)
                 {
                     Console.WriteLine("Задача решена все z - ci <= 0");
                     get_ansver();
