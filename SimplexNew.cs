@@ -451,7 +451,16 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             for (int j = 0; j < position_basis.GetLength(0); j++)
                 x[position_basis[j]] = A[j, A.GetLength(1) - 1];
 
-            for (int j = 0; j < A.GetLength(1) - A.GetLength(0) - 1; j++)
+
+            int n = 0;
+            for (int i = 0; i < potrebnosti.Length; i++)
+                if (potrebnosti[i] == M)
+                {
+                    n = i;
+                    break;
+                }
+
+            for (int j = 0; j < n; j++)
                 Console.Write("{0,3}", x[j]);
 
             F = z_fuction[z_fuction.Length - 1];
@@ -500,34 +509,8 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 }
             }
 
-            //правило для основки с М методом
-            //if (!is_M_Basis_Empty())
-            //{
-            //    int counter_poziv = 0;
-            //    int counter_negative = 0;
-            //    for (int i = 0; i < z_fuction_M.Length; i++)
-            //    {
-            //        if (z_fuction_M[i] > 0.0)
-            //            counter_poziv++;
-            //        if (z_fuction_M[i] < 0.0)
-            //            counter_negative++;
-            //    }
-
-            //    if (counter_negative != 0 && counter_poziv == 0)
-            //    {
-            //        Console.WriteLine("ЗАДАЧА решена ОПОРНЫЙ ПЛАН ВЫРОЖДЕН");
-            //        get_ansver();
-            //        return;
-            //    }
-            //}
-
             //последовательные действия алгоритма симплекс метода
             jordan_gaus();              //коректируем матрицу
-            //if (rules_i == -1 && rules_j == -1)
-            //{
-            //    Console.WriteLine("ЗАДАЧА НЕСОВМЕСТНА!");
-            //    return;
-            //}
             iteration();
         }
     }
