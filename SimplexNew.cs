@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -242,6 +243,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                     tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]) * z_fuction[j];
                 }
             }
+
             Console.WriteLine(Environment.NewLine + "(b[i] / A[i, j]) * z_fuction_M[j] == Матрица со всеми тао домноженная на Z");
             for (int i = 0; i < A.GetLength(0); i++)
             {
@@ -306,11 +308,11 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 }
             }
 
-            Console.WriteLine(Environment.NewLine + "(b[i] / A[i, j]) * z_fuction_M[j] == Матрица со всеми тао домноженная на Z");
+            Console.WriteLine(Environment.NewLine + "(b[i] / A[i, j]) * z_fuction_M[j] == Матрица со всеми тао домноженная на Z_М");
             for (int i = 0; i < A.GetLength(0); i++)
             {
                 for (int j = 0; j < A.GetLength(1) - 1; j++)
-                    Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
+                    Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j].ToString(CultureInfo.InvariantCulture));
 
                 Console.WriteLine();
             }
@@ -339,7 +341,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                     int min_index = 0;
                     for (int j = 0; j < A.GetLength(0); j++)
                     {
-                        if (tao[j, i] > 0 && tao[j, i] <= min)
+                        if (tao[j, i] >= 0 && tao[j, i] < min)
                         {
                             min = tao[j, i];
                             min_index = j;
