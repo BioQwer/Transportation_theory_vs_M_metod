@@ -460,7 +460,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                     break;
                 }
 
-            for (int j = 0; j < n; j++)
+            for (int j = 0; j < n-1; j++)
                 Console.Write("{0,3}", x[j]);
 
             F = z_fuction[z_fuction.Length - 1];
