@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SimplexNew.cs" />
+    <Compile Include="M_metod.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Транспортная_задача.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,10 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Листинг 2 на 2.txt" />
-    <Content Include="Листинг 2 на 3.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

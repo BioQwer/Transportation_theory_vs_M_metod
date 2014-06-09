@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace СравнениеМетодаПотенциалов_СимплексМетода
 {
-    public class SimplexNew    //Модифицированный СимплексМетод == М метод
+    public class M_metod    //Модифицированный СимплексМетод == М метод
     {
         protected double[,] A;  //матрица ограничений
         public double[] potrebnosti;     //условия целовой функции    их размер равен количтву столбов
@@ -75,10 +75,9 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             A = tempA;
             potrebnosti = post;
             zapasu = zaps;
-
         }
 
-        public SimplexNew(double[,] A, double[] potrebnosti, double[] zapasu)  //конструктор с созданием переменных класса и тут же заполнение
+        public M_metod(double[,] A, double[] potrebnosti, double[] zapasu)  //конструктор с созданием переменных класса и тут же заполнение
         {
             int n = A.GetLength(0);   //строки
             int k = A.GetLength(1);   //столбцы
@@ -227,7 +226,6 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             for (int i = 0; i < A.GetLength(1); i++)
                 Console.Write("{0,11:F1}", z_fuction_M[i]);
             Console.WriteLine();
-            Console.ReadKey();  //!!!!
         }
 
         private void find_in_z()
@@ -249,15 +247,6 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 {
                     tao[i, j] = (A[i, A.GetLength(1) - 1] / A[i, j]) * z_fuction[j];
                 }
-            }
-
-            Console.WriteLine(Environment.NewLine + "(b[i] / A[i, j]) * z_fuction_M[j] == Матрица со всеми тао домноженная на Z");
-            for (int i = 0; i < A.GetLength(0); i++)
-            {
-                for (int j = 0; j < A.GetLength(1) - 1; j++)
-                    Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j]);
-
-                Console.WriteLine();
             }
 
             for (int i = 0; i < n; i++)
@@ -318,14 +307,6 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                 }
             }
 
-            Console.WriteLine(Environment.NewLine + "(b[i] / A[i, j]) * z_fuction_M[j] == Матрица со всеми тао домноженная на Z_М");
-            for (int i = 0; i < A.GetLength(0); i++)
-            {
-                for (int j = 0; j < A.GetLength(1) - 1; j++)
-                    Console.Write(" [" + i + "," + j + "]={0,4:F1}", tao[i, j].ToString(CultureInfo.InvariantCulture));
-
-                Console.WriteLine();
-            }
             int counter = 0;
             for (int i = 0; i < z_fuction.Length - 1; i++)
             {
@@ -410,18 +391,12 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
                     find_in_z_M();
             }
             ////Вывод для себя  
-            Console.WriteLine("\nRules = [{0,2},{1,2}] = {2,2}", rules_i, rules_j, A[rules_i, rules_j]);
+            //Console.WriteLine("\nRules = [{0,2},{1,2}] = {2,2}", rules_i, rules_j, A[rules_i, rules_j]);
         }
 
         public void jordan_gaus()
         {
             rulez_element();
-            if (rules_i == -1 && rules_j == -1)
-            {
-                //Console.WriteLine("ЗАДАЧА НЕСОВМЕСТНА!");
-                return;
-            }
-
             double rules = A[rules_i, rules_j];
             zapasu[rules_i] = zapasu[rules_i] / rules;
             for (int j = 0; j < A.GetLength(1); j++)
@@ -471,7 +446,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
         {
             c_basis_full();             //заполняем с_базис
             z_full();
-            print_simplex();
+            //print_simplex();
 
             //первое условие остановки
             //помечаем столбцы где все элементы отрицательны

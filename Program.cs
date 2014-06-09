@@ -33,12 +33,11 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             post = new double[] { 7, 4, 2 };   //поставки
             zapac = new double[] { 7, 6 };   //запасы
 
+            Транспортная_задача.calculate_without_printText(A, zapac, post);
 
-            Транспортная_задача.calculate(A, zapac, post);
+            M_metod.Converter(ref A,ref post,ref zapac);
 
-            SimplexNew.Converter(ref A,ref post,ref zapac);
-
-            SimplexNew obj = new SimplexNew(A,post,zapac);
+            M_metod obj = new M_metod(A,post,zapac);
             obj.iteration();
             Console.ReadLine();
 
