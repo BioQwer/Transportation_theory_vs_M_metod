@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace СравнениеМетодаПотенциалов_СимплексМетода
 {
@@ -19,7 +14,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
         //главный эл-т
         protected int rules_i;
         protected int rules_j;
-        int M = 200;   //искуственная переменная большая цифра
+        double M = 0;   //искуственная переменная большая цифра
         double F = 0;   //целевая
 
 
@@ -92,7 +87,10 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             this.potrebnosti = new double[n + k];  //строка в симплекс таблице с c1,c2,c3... нумерацию вести с "0"
 
             for (int i = 0; i < k; i++)
+            {
                 this.potrebnosti[i] = potrebnosti[i];
+                M += this.potrebnosti[i];
+            }
             for (int i = k; i < n + k; i++)
                 this.potrebnosti[i] = M;
             //заполнение A
@@ -298,7 +296,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             bool[] polozhit_Z = new bool[z_fuction_M.Length];
             double[] min_A0_to_Aj = new double[z_fuction_M.Length];
             int[] index_min_A0_to_Aj = new int[z_fuction_M.Length];
-            double[,] tao = new double[A.GetLength(0), A.GetLength(1)];
+              double[,] tao = new double[A.GetLength(0), A.GetLength(1)];
             for (int i = 0; i < tao.GetLength(0); i++)
             {
                 for (int j = 0; j < tao.GetLength(1); j++)
@@ -397,6 +395,11 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
         public void jordan_gaus()
         {
             rulez_element();
+             if (rules_i == -1 && rules_j == -1)
+         {
+             //Console.WriteLine("ЗАДАЧА НЕСОВМЕСТНА!");
+             return;
+         }
             double rules = A[rules_i, rules_j];
             zapasu[rules_i] = zapasu[rules_i] / rules;
             for (int j = 0; j < A.GetLength(1); j++)
