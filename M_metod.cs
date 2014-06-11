@@ -296,7 +296,7 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             bool[] polozhit_Z = new bool[z_fuction_M.Length];
             double[] min_A0_to_Aj = new double[z_fuction_M.Length];
             int[] index_min_A0_to_Aj = new int[z_fuction_M.Length];
-              double[,] tao = new double[A.GetLength(0), A.GetLength(1)];
+            double[,] tao = new double[A.GetLength(0), A.GetLength(1)];
             for (int i = 0; i < tao.GetLength(0); i++)
             {
                 for (int j = 0; j < tao.GetLength(1); j++)

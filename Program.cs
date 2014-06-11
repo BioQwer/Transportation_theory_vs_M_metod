@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace СравнениеМетодаПотенциалов_СимплексМетода
 {
@@ -13,23 +14,32 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             potrebnosti = new double[k];
 
             Random random = new Random();
-            int max_value = 50;
+            int max_value = 6;
             int all_points = 0;
 
             for (int i = 0; i < n; i++)
             {
-                zapasu[i] = random.Next(n*max_value);
-                all_points += (int)zapasu[i];
                 for (int j = 0; j < k; j++)
-                    A[i, j] = random.Next(max_value);
+                {
+                    A[i, j] = random.Next(max_value*2)+max_value;
+                    Console.Write("{0,4}", A[i, j]);
+                    zapasu[i] += A[i,j]*max_value;
+                }
+                all_points += (int)zapasu[i];
+                Console.Write("{0,4}", zapasu[i]);
+                Console.WriteLine();
             }
 
+            int all = all_points;
             for (int i = 0; i < k-1; i++)
             {
-                potrebnosti[i]= random.Next(n*max_value);
+                potrebnosti[i] = all/k;
                 all_points -= (int)potrebnosti[i];
+                Console.Write("{0,4}", potrebnosti[i]);
             }
             potrebnosti[k - 1] = all_points;
+            Console.Write("{0,4}", potrebnosti[k - 1]);
+
         }
 
         public static void Time()
@@ -45,70 +55,70 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             Console.ReadLine();
             Console.WriteLine("Go!");
 
-            int maxDimension = 23;  //максимальное колличество измерений
+            int maxDimension = 10;  //максимальное колличество измерений
             int tasks = 10; //количество задач на одной размерности
 
-            long[,] timeSimlex = new long[maxDimension,maxDimension];
-            long[,] timeTransport = new long[maxDimension, maxDimension];
+            long[] timeSimlex = new long[maxDimension];
+            long[] timeTransport = new long[maxDimension];
 
             for (int i = 0; i < maxDimension; i++)
-                for (int j = 0; j < maxDimension; j++)
                 {
-                    timeSimlex[i, j] = 0;
-                    timeTransport[i, j] = 0;
+                    timeSimlex[i] = 0;
+                    timeTransport[i] = 0;
                 }
 
             string path = "E:\\Dropbox\\Visual Studio\\Projects\\Transportation_theory_vs_M_metod\\";    //TODO ! установите свою папку вывода результатов
 
             for (int i = 2; i < maxDimension; i++)
             {
-                for (int j = 2; j < maxDimension; j++)
-                {
-                    if(Math.Abs(i-j)<6)
                         for (int q = 0; q < tasks; q++)
                         {
-                            generate_data(ref A, ref post, ref zapac, i, j);
+                            generate_data(ref A, ref post, ref zapac, i, i);
                             Stopwatch swatch = new Stopwatch(); // создаем объект
-                            swatch.Start(); // старт
-                            Транспортная_задача.calculate_without_printText(A, zapac, post);
-                            swatch.Stop(); // стоп
-                            timeSimlex[i, j] += swatch.ElapsedTicks;
+                            
+                                swatch.Start(); // старт
+                                Транспортная_задача.calculate_without_printText(A, zapac, post);
+                                swatch.Stop(); // стоп
+                             
+                            timeSimlex[i] += swatch.ElapsedTicks;
                             //Console.WriteLine(swatch.ElapsedTicks); // выводим результат в консоль   
-                            timeTransport[i, j] += swatch.ElapsedTicks;
+                            timeTransport[i] += swatch.ElapsedTicks;
                             M_metod.Converter(ref A, ref post, ref zapac);
 
                             M_metod obj = new M_metod(A, post, zapac);
                             Stopwatch swatch1 = new Stopwatch(); // создаем объект
-                            swatch1.Start();
-                            obj.iteration();
-                            swatch1.Stop(); // стоп
-                            timeSimlex[i, j] += swatch1.ElapsedTicks;
+                            try
+                            {
+                                swatch1.Start();
+                                obj.iteration();
+                                swatch1.Stop(); // стоп
+                            }
+                            catch (StackOverflowException r)
+                            {
+                                Console.WriteLine(r);
+                                q = q - 1;
+                            }
+                            timeSimlex[i] += swatch1.ElapsedTicks;
                             //Console.WriteLine(swatch1.ElapsedTicks); // выводим результат в консоль
+                            Console.WriteLine(q*i); 
                         }
-                }
             }
             for (int i = 0; i < maxDimension; i++)
-                for (int j = 0; j < maxDimension; j++)
-                {
-                    timeSimlex[i, j] /=tasks;
-                    timeTransport[i, j] /=tasks;
+            {
+                    timeSimlex[i] /=tasks;
+                    timeTransport[i] /=tasks;
                 }
 
             StreamWriter fSimplex = new System.IO.StreamWriter(@"" + path + "simple.txt");
             StreamWriter fTransport = new System.IO.StreamWriter(@"" + path + "transport.txt");
 
-            for (int i = 0; i < maxDimension; i++)
+            for (int i =2; i < maxDimension; i++)
             {
-                for (int j = 0; j < maxDimension; j++)
-                {
-                    timeSimlex[i, j] /= tasks;
-                    fSimplex.Write("{0} ", timeSimlex[i, j]);
-                    timeTransport[i, j] /= tasks;
-                    fTransport.Write("{0} ", timeTransport[i, j]);
-                }
-                fSimplex.Write(Environment.NewLine);
-                fTransport.Write(Environment.NewLine);
+                fSimplex.WriteLine("{0} ", timeSimlex[i]);
+                fTransport.WriteLine("{0} ", timeTransport[i]);
             }
+            fSimplex.Close();
+            fTransport.Close();
 
             Console.WriteLine("Finish");
             Console.ReadKey();
