@@ -13,33 +13,32 @@ namespace СравнениеМетодаПотенциалов_Симплекс�
             zapasu = new double[n];
             potrebnosti = new double[k];
 
-            Random random = new Random();
+            Random random = new Random(); 
             int max_value = 6;
-            int all_points = 0;
+            int all_zapacu = 0;
 
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < k; j++)
                 {
-                    A[i, j] = random.Next(max_value*2)+max_value;
+                    A[i, j] = random.Next(max_value*2)+max_value;  
                     Console.Write("{0,4}", A[i, j]);
                     zapasu[i] += A[i,j]*max_value;
                 }
-                all_points += (int)zapasu[i];
+                all_zapacu += (int)zapasu[i];
                 Console.Write("{0,4}", zapasu[i]);
                 Console.WriteLine();
             }
 
-            int all = all_points;
+            int all = all_zapacu;
             for (int i = 0; i < k-1; i++)
             {
                 potrebnosti[i] = all/k;
-                all_points -= (int)potrebnosti[i];
+                all_zapacu -= (int)potrebnosti[i];
                 Console.Write("{0,4}", potrebnosti[i]);
             }
-            potrebnosti[k - 1] = all_points;
+            potrebnosti[k - 1] = all_zapacu;
             Console.Write("{0,4}", potrebnosti[k - 1]);
-
         }
 
         public static void Time()
